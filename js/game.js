@@ -451,10 +451,9 @@ window.Game = (function () {
     _drawPauseScreen() {
       let message;
       switch (this.state.currentStatus) {
-        case Verdict.INTRO: // was WIN
+        case Verdict.WIN:
           if (window.renderStatistics) {
-            // let statistics = this._generateStatistics(new Date() - this.state.startTime);
-            let statistics = this._generateStatistics(1000 + Math.random() * 1000);
+            let statistics = this._generateStatistics(new Date() - this.state.startTime);
             let keys = this._shuffleArray(Object.keys(statistics));
             window.renderStatistics(this.ctx, keys, keys.map(function (it) {
               return statistics[it];
@@ -469,7 +468,7 @@ window.Game = (function () {
         case Verdict.PAUSE:
           message = `Игра на паузе!\nНажмите Пробел, чтобы продолжить`;
           break;
-        case Verdict.INTRO2:
+        case Verdict.INTRO:
           message = `Добро пожаловать!\nНажмите Пробел для начала игры`;
           break;
       }
