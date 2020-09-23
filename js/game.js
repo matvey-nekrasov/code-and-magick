@@ -1,5 +1,14 @@
 'use strict';
 
+const {fireballSize,
+  getFireballSpeed,
+  wizardWidth,
+  getWizardHeight,
+  wizardSpeed,
+  getWizardX,
+  getWizardY
+} = window.GameConstantsHtml;
+
 window.GameConstants = {
   Fireball: {
     size: fireballSize || 24,
