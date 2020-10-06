@@ -1,6 +1,23 @@
 'use strict';
 
+/**
+ * Глобальные константы --------------------------------------------------------------------------------------
+ */
+
 const WIZARDS_COUNT = 4;
+
+const Wizard = {
+  NAMES: [`Иван`, `Хуан Себастьян`, `Мария`, `Кристоф`, `Виктор`, `Юлия`, `Люпита`, `Вашингтон`],
+  SURNAMES: [`да Марья`, `Верон`, `Мирабелла`, `Вальц`, `Онопко`, `Топольницкая`, `Нионго`, `Ирвинг`],
+  COAT_COLORS: [`rgb(101, 137, 164)`, `rgb(241, 43, 107)`, `rgb(146, 100, 161)`, `rgb(56, 159, 117)`, `rgb(215, 210, 55)`, `rgb(0, 0, 0)`],
+  EYES_COLORS: [`black`, `red`, `blue`, `yellow`, `green`],
+  FIREBALL_COLORS: [`#ee4830`, `#30a8ee`, `#5ce6c0`, `#e848d5`, `#e6e848`]
+};
+
+
+/**
+ * Служебные функции ---------------------------------------------------
+ */
 
 /**
  * Получение случайного элемента массива
@@ -11,18 +28,17 @@ const getRandomElementFromArray = (items) => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
+
+/**
+ * Генерация похожих персонажей ---------------------------------------------------
+ */
+
 /**
  * Генерация данных о волшебниках
  * @param {number} count количество объектов для генерации
  * @return {Array} массив объектов волшебников
  */
-const generateWizards = (count) => {
-  const Wizard = {
-    NAMES: [`Иван`, `Хуан Себастьян`, `Мария`, `Кристоф`, `Виктор`, `Юлия`, `Люпита`, `Вашингтон`],
-    SURNAMES: [`да Марья`, `Верон`, `Мирабелла`, `Вальц`, `Онопко`, `Топольницкая`, `Нионго`, `Ирвинг`],
-    COAT_COLORS: [`rgb(101, 137, 164)`, `rgb(241, 43, 107)`, `rgb(146, 100, 161)`, `rgb(56, 159, 117)`, `rgb(215, 210, 55)`, `rgb(0, 0, 0)`],
-    EYES_COLORS: [`black`, `red`, `blue`, `yellow`, `green`]
-  };
+const generateWizardsData = (count) => {
 
   const wizards = [];
   for (let i = 0; i < count; i++) {
@@ -66,9 +82,103 @@ const renderWizardsToFragment = (wizards) => {
 
 const userDialog = document.querySelector(`.setup`);
 const similarList = userDialog.querySelector(`.setup-similar-list`);
-const wizards = generateWizards(WIZARDS_COUNT);
-const fragment = renderWizardsToFragment(wizards);
-similarList.appendChild(fragment);
+const wizardsData = generateWizardsData(WIZARDS_COUNT);
+const wizardsFragment = renderWizardsToFragment(wizardsData);
+similarList.appendChild(wizardsFragment);
 
 userDialog.classList.remove(`hidden`);
 userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
+
+
+/**
+ * Обработка событий -----------------------------------------------------
+ */
+
+const setupDiv = document.querySelector(`.setup`);
+const setupOpenButton = document.querySelector(`.setup-open`);
+const setupCloseButton = setupDiv.querySelector(`.setup-close`);
+const setupUserNameTextBox = setupDiv.querySelector(`.setup-user-name`);
+
+/**
+ * Обработчик нажатия Esc - закрывает попап с настройками
+ * @param {*} evt событие
+ */
+const onPopupEscPress = (evt) => {
+  if (evt.key === `Escape`) {
+    evt.preventDefault();
+    closePopup();
+  }
+};
+
+// Открытие окна с настройками
+const openPopup = () => {
+  setupDiv.classList.remove(`hidden`);
+  document.addEventListener(`keydown`, onPopupEscPress);
+};
+
+// Скрытие окна с настройками
+const closePopup = () => {
+  setupDiv.classList.add(`hidden`);
+  document.removeEventListener(`keydown`, onPopupEscPress);
+};
+
+// Запрет закрытия окна setup при фокусе на UserNameTextBox
+setupUserNameTextBox.addEventListener(`focus`, () => {
+  document.removeEventListener(`keydown`, onPopupEscPress);
+});
+
+// Добавление закрытия окна setup при уходе фокуса с UserNameTextBox
+setupUserNameTextBox.addEventListener(`blur`, () => {
+  document.addEventListener(`keydown`, onPopupEscPress);
+});
+
+// Открытие окна setup при нажатии на кнопку
+setupOpenButton.addEventListener(`click`, () => {
+  openPopup();
+});
+
+// Открытие окна setup при нажатии на Enter на кнопке
+setupOpenButton.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    openPopup();
+  }
+});
+
+// Закрытие окна setup при нажатии на кнопку
+setupCloseButton.addEventListener(`click`, () => {
+  closePopup();
+});
+
+// Закрытие окна setup при нажатии на Enter на кнопке
+setupCloseButton.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    closePopup();
+  }
+});
+
+/**
+ * Устанавливает свойство [element].style.fill на случайное из массива [colorsArray]
+ * @param {Element} element
+ * @param {Array} colorsArray
+ */
+const setElementRandomFillColor = (element, colorsArray) => {
+  element.style.fill = getRandomElementFromArray(colorsArray);
+};
+
+// Изменение цвета мантии персонажа при клику на неё
+const wizardCoatElement = setupDiv.querySelector(`.setup-wizard .wizard-coat`);
+wizardCoatElement.addEventListener(`click`, () => {
+  setElementRandomFillColor(wizardCoatElement, Wizard.COAT_COLORS);
+});
+
+// Изменение цвета глаз персонажа при клику на них
+const wizardEyesElement = setupDiv.querySelector(`.setup-wizard .wizard-eyes`);
+wizardEyesElement.addEventListener(`click`, () => {
+  setElementRandomFillColor(wizardEyesElement, Wizard.EYES_COLORS);
+});
+
+// Изменение цвета фаербола персонажа при клику на него
+const fireballElement = setupDiv.querySelector(`.setup-fireball-wrap`);
+fireballElement.addEventListener(`click`, () => {
+  fireballElement.style.background = getRandomElementFromArray(Wizard.FIREBALL_COLORS);
+});
