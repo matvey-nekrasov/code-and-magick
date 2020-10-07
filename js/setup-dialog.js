@@ -19,6 +19,10 @@
 
   // Открытие окна с настройками
   const openPopup = () => {
+    // Сбрасывание координат окна после перемещения
+    setupDiv.style.top = ``;
+    setupDiv.style.left = ``;
+
     setupDiv.classList.remove(`hidden`);
     document.addEventListener(`keydown`, onPopupEscPress);
   };
