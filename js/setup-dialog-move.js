@@ -4,7 +4,15 @@
 
 (() => {
   const setupDiv = document.querySelector(`.setup`);
+  window.setupDiv = setupDiv;
   const dialogHandle = setupDiv.querySelector(`.upload`);
+
+  const SetupDivBoundaries = {
+    MIN_TOP: 0,
+    MIN_LEFT: setupDiv.offsetWidth / 2,
+    MAX_TOP: window.innerHeight - setupDiv.offsetHeight,
+    MAX_LEFT: window.innerWidth - setupDiv.offsetWidth / 2
+  };
 
   dialogHandle.addEventListener(`mousedown`, (evt) => {
     evt.preventDefault();
@@ -31,8 +39,10 @@
         y: moveEvt.clientY
       };
 
-      setupDiv.style.top = (setupDiv.offsetTop - shift.y) + `px`;
-      setupDiv.style.left = (setupDiv.offsetLeft - shift.x) + `px`;
+      setupDiv.style.top = Math.min(Math.max(setupDiv.offsetTop - shift.y, SetupDivBoundaries.MIN_TOP),
+          SetupDivBoundaries.MAX_TOP) + `px`;
+      setupDiv.style.left = Math.min(Math.max(setupDiv.offsetLeft - shift.x, SetupDivBoundaries.MIN_LEFT),
+          SetupDivBoundaries.MAX_LEFT) + `px`;
     };
 
     const onMouseUp = (upEvt) => {
