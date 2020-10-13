@@ -4,10 +4,18 @@
 
 (() => {
   const setupDiv = document.querySelector(`.setup`);
+  window.setupDiv = setupDiv;
   const dialogHandle = setupDiv.querySelector(`.upload`);
 
   dialogHandle.addEventListener(`mousedown`, (evt) => {
     evt.preventDefault();
+
+    const setupDivBoundaries = {
+      minTop: 0,
+      minLeft: setupDiv.offsetWidth / 2,
+      maxTop: window.innerHeight - setupDiv.offsetHeight,
+      maxLeft: window.innerWidth - setupDiv.offsetWidth / 2
+    };
 
     let startCoords = {
       x: evt.clientX,
@@ -31,8 +39,10 @@
         y: moveEvt.clientY
       };
 
-      setupDiv.style.top = (setupDiv.offsetTop - shift.y) + `px`;
-      setupDiv.style.left = (setupDiv.offsetLeft - shift.x) + `px`;
+      setupDiv.style.top = `${Math.min(Math.max(setupDiv.offsetTop - shift.y, setupDivBoundaries.minTop),
+          setupDivBoundaries.maxTop)}px`;
+      setupDiv.style.left = `${Math.min(Math.max(setupDiv.offsetLeft - shift.x, setupDivBoundaries.minLeft),
+          setupDivBoundaries.maxLeft)}px`;
     };
 
     const onMouseUp = (upEvt) => {
