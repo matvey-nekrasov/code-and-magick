@@ -65,12 +65,12 @@
 
   const userDialog = document.querySelector(`.setup`);
   // Загрузка данных о волшебниках при старте
-  window.backend.load(backendLoadOnLoad, backendOnError);
+  window.backend.xmlHttpRequestWrapper(`GET`, null, backendLoadOnLoad, backendOnError);
 
   // Обработчик при отправке формы
   const form = userDialog.querySelector(`.setup-wizard-form`);
   const submitHandler = (evt) => {
-    window.backend.save(new FormData(form), backendSaveOnLoad, backendOnError);
+    window.backend.xmlHttpRequestWrapper(`POST`, new FormData(form), backendSaveOnLoad, backendOnError);
     evt.preventDefault();
   };
   form.addEventListener(`submit`, submitHandler);
